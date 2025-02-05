@@ -18,4 +18,8 @@ router.put('/review/:id', reviewController.updateReviewById);
 
 router.delete('/review/:id', reviewController.deleteReviewById);
 
+// Like a review
+router.post('/review/:reviewId/like', reviewController.likeReviewByUserId);
+router.post('/review/:reviewId/unlike', reviewController.unlikeReviewByUserId);
+
 module.exports = router;

@@ -145,3 +145,48 @@ exports.getMovieRatingById = async(req, res) => {
         res.status(500).json({ message: 'Server error', error });
     }
 };
+
+exports.likeReviewByUserId = async(req, res) => {    
+    try {
+        const { reviewId } = req.params;
+        const userId = req.body.userId; 
+
+        const review = await Review.findById(reviewId);
+        if (!review) return res.status(404).json({ message: 'Review not found' });
+
+        if (review.likes.includes(userId)) {
+            return res.status(400).json({ message: 'You have already liked this review' });
+        }
+
+        review.likes.push(userId);
+        await review.save();
+ 
+        res.status(200).json({ status: 'success', message: 'Review liked successfully', data: review.likes.length });
+    } catch (error) {        
+        return res.status(500).json({ status: 'error', message: 'Server error: Cannot create the like.' });
+    }
+};
+
+exports.unlikeReviewByUserId = async(req, res) => {
+    try {
+        const { reviewId } = req.params;
+        const userId = req.body.userId; 
+
+        const review = await Review.findById(reviewId);
+        if (!review) return res.status(404).json({ message: 'Review not found' });
+
+        if (!review.likes.includes(userId)) {
+            return res.status(400).json({ message: 'You have not liked this review' });
+        }
+
+        console.clear();
+        console.log('review.likes.filter', review.likes);
+
+        review.likes = review.likes.filter(id => id.toString() !== userId.toString());
+        await review.save();
+ 
+        res.status(200).json({ status: 'success', message: 'Review unliked successfully', data: review.likes.length });
+    } catch (error) {        
+        return res.status(500).json({ status: 'error', message: 'Server error: Cannot create the unlike.' });
+    }
+};
