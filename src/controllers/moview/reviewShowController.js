@@ -154,7 +154,7 @@ exports.likeReviewByUserId = async(req, res) => {
         const { reviewId } = req.params;
         const userId = req.body.userId; 
 
-        const review = await Review.findById(reviewId);
+        const review = await ReviewShow.findById(reviewId);
         if (!review) return res.status(404).json({ message: 'Review not found' });
 
         if (review.likes.includes(userId)) {
@@ -166,7 +166,7 @@ exports.likeReviewByUserId = async(req, res) => {
  
         res.status(200).json({ status: 'success', message: 'Review liked successfully', data: review.likes.length });
     } catch (error) {        
-        return res.status(500).json({ status: 'error', message: 'Server error: Cannot create the like.' });
+        return res.status(500).json({ status: 'error', message: `Server error: Cannot create the like. ${error}` });
     }
 };
 
@@ -175,7 +175,7 @@ exports.unlikeReviewByUserId = async(req, res) => {
         const { reviewId } = req.params;
         const userId = req.body.userId; 
 
-        const review = await Review.findById(reviewId);
+        const review = await ReviewShow.findById(reviewId);
         if (!review) return res.status(404).json({ message: 'Review not found' });
 
         if (!review.likes.includes(userId)) {
