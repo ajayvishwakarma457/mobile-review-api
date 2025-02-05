@@ -179,9 +179,6 @@ exports.unlikeReviewByUserId = async(req, res) => {
             return res.status(400).json({ message: 'You have not liked this review' });
         }
 
-        console.clear();
-        console.log('review.likes.filter', review.likes);
-
         review.likes = review.likes.filter(id => id.toString() !== userId.toString());
         await review.save();
  
