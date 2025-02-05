@@ -31,7 +31,8 @@ const reviewShowSchema = new Schema({
     is_deleted: {
         type: Boolean,
         default: false
-    }
+    }, 
+    likes: [{ type: Schema.Types.ObjectId, ref: 'User' }]
 });
 
 const ReviewShow = mongoose.model.ReviewShow || mongoose.model('ReviewShow', reviewShowSchema);
