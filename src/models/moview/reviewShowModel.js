@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const Show = require('./showModel');
 const User = require('./userModel');
+const ShowReviewComment = require('./showReviewCommentModel');
 
 const reviewShowSchema = new Schema({
     show: {
@@ -32,7 +33,8 @@ const reviewShowSchema = new Schema({
         type: Boolean,
         default: false
     }, 
-    likes: [{ type: Schema.Types.ObjectId, ref: 'User' }]
+    likes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    comments: [{type: Schema.Types.ObjectId,ref: 'ShowReviewComment'}],
 });
 
 const ReviewShow = mongoose.model.ReviewShow || mongoose.model('ReviewShow', reviewShowSchema);

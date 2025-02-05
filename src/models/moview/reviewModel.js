@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const Movie = require('./movieModel');
 const User = require('./userModel');
+const MovieReviewComment = require('./movieReviewCommentModel');
 
 const reviewSchema = new Schema({
     movie: {
@@ -32,7 +33,8 @@ const reviewSchema = new Schema({
         type: Boolean,
         default: false
     }, 
-    likes: [{ type: Schema.Types.ObjectId, ref: 'User' }]
+    likes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    comments: [{type: Schema.Types.ObjectId,ref: 'MovieReviewComment'}],
 });
 
 const Review = mongoose.model.Review || mongoose.model('Review', reviewSchema);

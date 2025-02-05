@@ -1,3 +1,4 @@
+const MovieReviewComment = require('../../models/moview/movieReviewCommentModel');
 const Review = require('../../models/moview/reviewModel');
 
 exports.getAllReviews = async(req, res) => {
@@ -185,5 +186,35 @@ exports.unlikeReviewByUserId = async(req, res) => {
         res.status(200).json({ status: 'success', message: 'Review unliked successfully', data: review.likes.length });
     } catch (error) {        
         return res.status(500).json({ status: 'error', message: 'Server error: Cannot create the unlike.' });
+    }
+};
+
+
+//http://localhost:3333/api/review/67a30c41dee8c7cd3d05469c/comment
+// {
+//     "userId":"67977880dee8c7cd3de1d9b9",
+//     "text":"Nice Comment"
+// }
+exports.commentByUserId = async(req, res) => {
+    try {
+        const { reviewId } = req.params;
+        const { text, userId } = req.body;
+        
+        if (!text) return res.status(400).json({ message: 'Comment text is required' });
+
+        const review = await Review.findById(reviewId);
+        if (!review) return res.status(404).json({ message: 'Review not found' });
+
+        // Create a new comment
+        const newComment = new MovieReviewComment({user: userId,review: reviewId,text});
+        await newComment.save();
+
+        // Add the comment reference to the review
+        review.comments.push(newComment._id);
+        await review.save();
+
+        res.status(200).json({ status: 'success', message: 'Comment created successfully' });
+    } catch (error) {
+        return res.status(500).json({ status: 'error', message: 'Server error: Cannot create the comment.' });        
     }
 };

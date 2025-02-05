@@ -22,5 +22,8 @@ router.delete('/review-show/:id', reviewShowController.deleteReviewById);
 router.post('/review-show/:reviewId/like', reviewShowController.likeReviewByUserId);
 router.post('/review-show/:reviewId/unlike', reviewShowController.unlikeReviewByUserId);
 
+// Add a comment to a review
+router.post('/review-show/:reviewId/comment', reviewShowController.commentByUserId);
+
 module.exports = router;
 
