@@ -221,3 +221,16 @@ exports.commentByUserId = async(req, res) => {
         return res.status(500).json({ status: 'error', message: `Server error: Cannot create the comment. ${error}` });        
     }
 };
+
+exports.getCommentByReviewId = async(req, res) => {    
+    try {
+        const data = await ShowReviewComment.find({review:req.params.reviewId}).populate('user', '-password_hash -reset_password_token -reset_password_expires -is_deleted -created_at -updated_at -deleted_at');
+
+        if (!data) {
+            return res.status(404).json({ status: 'fail', message: 'No comment found with that ID' });
+        }
+        res.status(200).json({ status: 'success', data: { data } });
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: 'Server error: Cannot retrieve the comment.' });
+    }
+};

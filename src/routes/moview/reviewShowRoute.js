@@ -23,6 +23,7 @@ router.post('/review-show/:reviewId/like', reviewShowController.likeReviewByUser
 router.post('/review-show/:reviewId/unlike', reviewShowController.unlikeReviewByUserId);
 
 // Add a comment to a review
+router.get('/review-show/:reviewId/comment', reviewShowController.getCommentByReviewId);
 router.post('/review-show/:reviewId/comment', reviewShowController.commentByUserId);
 
 module.exports = router;
