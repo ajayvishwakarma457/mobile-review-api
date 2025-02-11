@@ -32,6 +32,7 @@ const movieReportReviewRoute = require('./src/routes/moview/movieReportReviewRou
 const showReportReviewRoute = require('./src/routes/moview/showReportReviewRoute');
 const userMovieViewRoute = require('./src/routes/moview/userMovieViewRoute');
 const userShowViewRoute = require('./src/routes/moview/userShowViewRoute');
+const topSearchedMoviesRoute = require('./src/routes/moview/topSearchedMoviesRoute');
 
 const testRoute = require('./src/routes/moview/testRoute');
 app.use('/api', testRoute);
@@ -54,6 +55,7 @@ app.use('/api', authMiddleware.verifyToken, showReportReviewRoute);
 
 app.use('/api', authMiddleware.verifyToken, userMovieViewRoute);
 app.use('/api', authMiddleware.verifyToken, userShowViewRoute);
+app.use('/api', authMiddleware.verifyToken, topSearchedMoviesRoute);
 
 const PORT = process.env.PORT || 3333;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
