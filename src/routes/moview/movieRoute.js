@@ -3,6 +3,7 @@ const router = express.Router();
 const movieController = require('../../controllers/moview/movieController');
 
 router.get('/movie', movieController.getAllMovies);
+router.post('/movie-by-genre', movieController.getMoviesByGenre);
 
 //router.post('/movie/search', movieController.searchMovies);
 

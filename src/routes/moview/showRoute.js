@@ -3,6 +3,7 @@ const router = express.Router();
 const showController = require('../../controllers/moview/showController');
 
 router.get('/show', showController.getAllShows);
+router.post('/show-by-genre', showController.getShowsByGenre);
 
 //router.post('/show/search', showController.searchShows);
 

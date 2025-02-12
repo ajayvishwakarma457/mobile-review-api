@@ -71,3 +71,26 @@ exports.deleteShowById = async(req, res) => {
         res.status(500).json({ status: 'error', message: 'Server error: Cannot delete the show.' });
     }
 };
+
+
+
+exports.getShowsByGenre = async(req, res) => {
+    try {
+        const { genre } = req.body;
+        if (!genre) {
+            return res.status(400).json({ message: "Genre is required" });
+        }
+        const shows = await Show.find({
+            genre: { $regex: new RegExp(`\\b${genre}\\b`, 'i') }, // Match whole word
+            is_deleted: false
+        });
+
+        if (shows.length === 0) {
+            return res.status(404).json({ message: "No shows found for this genre" });
+        }
+
+        res.status(200).json({ status: 'success', results: shows.length, data: { shows } });
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
