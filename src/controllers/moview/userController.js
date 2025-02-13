@@ -33,7 +33,7 @@ exports.getUserByName = async(req, res) => {
         });
 
         if (users.length === 0) {
-            return res.status(404).json({ status: 'error', message: 'No users found' });
+            return res.status(200).json({ status: 'error', message: 'No users found' });
         }
 
         res.status(200).json({ status: 'success', results: users.length, data: { users } });
