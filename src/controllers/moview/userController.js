@@ -18,6 +18,30 @@ exports.getAllUsers = async(req, res) => {
     }
 };
 
+exports.getUserByName = async(req, res) => {
+    try {
+        const { name } = req.body;
+        if (!name) {
+            return res.status(400).json({ status: 'error', message: 'Name query parameter is required' });
+        }
+
+        const users = await User.find({
+            $or: [
+                    { firstname: { $regex: name, $options: 'i' } }, // Case-insensitive search in firstname
+                    { username: { $regex: name, $options: 'i' } }  // Case-insensitive search in username
+                ]
+        });
+
+        if (users.length === 0) {
+            return res.status(404).json({ status: 'error', message: 'No users found' });
+        }
+
+        res.status(200).json({ status: 'success', results: users.length, data: { users } });
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: 'Server error: Cannot retrieve users.' });
+    }
+};
+
 exports.getUserById = async(req, res) => {
     try {
         const user = await User.findById(req.params.id);
