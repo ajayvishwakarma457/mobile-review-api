@@ -85,7 +85,7 @@ exports.getMoviesByGenre = async(req, res) => {
         });
 
         if (movies.length === 0) {
-            return res.status(404).json({ message: "No movies found for this genre" });
+            return res.status(200).json({ message: "No movies found for this genre" });
         }
 
         res.status(200).json({ status: 'success', results: movies.length, data: { movies } });

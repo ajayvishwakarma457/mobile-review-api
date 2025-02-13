@@ -86,7 +86,7 @@ exports.getShowsByGenre = async(req, res) => {
         });
 
         if (shows.length === 0) {
-            return res.status(404).json({ message: "No shows found for this genre" });
+            return res.status(200).json({ message: "No shows found for this genre" });
         }
 
         res.status(200).json({ status: 'success', results: shows.length, data: { shows } });
