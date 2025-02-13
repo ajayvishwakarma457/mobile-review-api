@@ -3,7 +3,7 @@ const router = express.Router();
 const userController = require('../../controllers/moview/userController');
 
 router.get('/user', userController.getAllUsers);
-router.post('/user', userController.getUserByName);
+// router.post('/user', userController.getUserByName);
 
 router.get('/user/:id', userController.getUserById);
 

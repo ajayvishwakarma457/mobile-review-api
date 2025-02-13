@@ -54,7 +54,7 @@ exports.getUserById = async(req, res) => {
     }
 };
 
-exports.createUser = async(req, res) => {
+exports.createUser = async(req, res) => {    
     try {
 
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -70,7 +70,7 @@ exports.createUser = async(req, res) => {
     } catch (error) {
         if (error.name === 'ValidationError') {
             const errors = Object.values(error.errors).map(err => err.message);
-            return res.status(400).json({ status: 'error', message: errors });
+            return res.status(400).json({ status: 'error...', message: errors });
         } else if (error.code === 11000) {
             return res.status(400).json({ status: 'error', message: 'User name or email already exists.' });
         } else {
