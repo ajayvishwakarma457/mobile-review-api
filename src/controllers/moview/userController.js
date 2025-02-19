@@ -18,30 +18,6 @@ exports.getAllUsers = async(req, res) => {
     }
 };
 
-// exports.getUserByName = async(req, res) => {
-//     try {
-//         const { name, userId } = req.body;
-//         if (!name) {
-//             return res.status(400).json({ status: 'error', message: 'Name query parameter is required' });
-//         }
-
-//         const users = await User.find({
-//             $or: [
-//                     { firstname: { $regex: name, $options: 'i' } }, // Case-insensitive search in firstname
-//                     { username: { $regex: name, $options: 'i' } }  // Case-insensitive search in username
-//                 ]
-//         });
-
-//         if (users.length === 0) {
-//             return res.status(200).json({ status: 'error', message: 'No users found' });
-//         }
-
-//         res.status(200).json({ status: 'success', results: users.length, data: { users } });
-//     } catch (error) {
-//         res.status(500).json({ status: 'error', message: 'Server error: Cannot retrieve users.' });
-//     }
-// };
-
 exports.getUserByName = async(req, res) => {
     try {
         const { name, userId } = req.body;
@@ -72,6 +48,36 @@ exports.getUserByName = async(req, res) => {
                 isFollowing: followingIds.includes(user._id.toString())
             };
         });
+
+        res.status(200).json({ status: 'success', results: modifiedUsers.length, data: { users: modifiedUsers } });
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: 'Server error: Cannot retrieve users.' });
+    }
+};
+
+exports.getSuggestedUserById = async(req, res) => {
+    try {
+        const { userId } = req.params; // Getting userId from params
+                
+        if (!userId) {
+            return res.status(400).json({ status: 'error', message: 'User ID is required' });
+        }
+
+        // Get list of users that the current user is following
+        const followingList = await Following.find({ userId }).select('followingId');
+        const followingIds = followingList.map(f => f.followingId.toString());
+
+        // Find users excluding the current user and users they already follow
+        const users = await User.find({ _id: { $nin: [...followingIds, userId] } });
+        
+
+
+        if (users.length === 0) {
+            return res.status(200).json({ status: 'error', message: 'No users found' });
+        }
+
+        // Modify user list to include isFollowing property (all should be false)
+        const modifiedUsers = users.map(user => ({ ...user.toObject(), isFollowing: false }));
 
         res.status(200).json({ status: 'success', results: modifiedUsers.length, data: { users: modifiedUsers } });
     } catch (error) {

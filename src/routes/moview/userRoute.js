@@ -3,6 +3,9 @@ const router = express.Router();
 const userController = require('../../controllers/moview/userController');
 
 router.get('/user', userController.getAllUsers);
+
+router.get('/user-suggested/:userId', userController.getSuggestedUserById);
+
 router.post('/user-by-name', userController.getUserByName);
 
 router.get('/user/:id', userController.getUserById);
