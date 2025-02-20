@@ -9,12 +9,53 @@ const Review = require('../../models/moview/reviewModel');
 const ReviewShow = require('../../models/moview/reviewShowModel');
 const ShowNotification = require('../../models/moview/showNotificationModel');
 
+const Movie = require('../../models/moview/movieModel');
+const Show = require('../../models/moview/showModel');
+
 exports.getAllUsers = async(req, res) => {
     try {
         const users = await User.find({});
         res.status(200).json({ status: 'success', results: users.length, data: { users } });
     } catch (error) {
         res.status(500).json({ status: 'error', message: 'Server error: Cannot retrieve users.' });
+    }
+};
+
+exports.getOtherUserDetails = async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        // Fetch user details
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ status: 'error', message: 'User not found' });
+        }
+
+        // Count the number of followers
+        const followersCount = await Follower.countDocuments({ userId: userId });
+
+        // Count the number of users this user is following
+        const followingCount = await Following.countDocuments({ userId: userId });
+
+        // Find reviews by this user
+        const reviews = await Review.find({ user: userId });
+        const reviewShows = await ReviewShow.find({ user: userId });
+        
+        // Separate reviews for movies and shows
+        const movieReviews = reviews.filter(review => review.movie);
+        const showReviews = reviewShows.filter(review => review.show);
+
+        // Fetch the list of movies the user reviewed
+        const movies = await Movie.find({ _id: { $in: movieReviews.map(r => r.movie) } });
+
+        // Fetch the list of shows the user reviewed
+        const shows = await Show.find({ _id: { $in: showReviews.map(r => r.show) } });
+
+        // Send the response
+        res.status(200).json({status: 'success', data: {user,totalReviewedMovies: movieReviews.length,totalReviewedShows: showReviews.length,followersCount,followingCount,reviewedMovies: movies,reviewedShows: shows}});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ status: 'error', message: 'Server error: Cannot retrieve user details.' });
     }
 };
 
