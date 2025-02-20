@@ -44,7 +44,7 @@ exports.getTopRatedShows = async (req, res) => {
             };
         }).filter(show => show !== null); // Remove null values
 
-        res.status(200).json({status: 'success',results: topRatedShows.length,data: { topRatedShows }});
+        res.status(200).json({status: 'success',results: topRatedShows.length,data: { shows:topRatedShows }});
     } catch (error) {
         console.error(error);
         res.status(500).json({ status: 'error', message: 'Server error: Cannot retrieve top-rated shows.' });
