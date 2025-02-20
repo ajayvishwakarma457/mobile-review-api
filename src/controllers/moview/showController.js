@@ -1,4 +1,5 @@
 const Show = require('../../models/moview/showModel');
+const ReviewShow = require('../../models/moview/reviewShowModel');
 
 exports.getAllShows = async(req, res) => {
     try {
@@ -7,6 +8,46 @@ exports.getAllShows = async(req, res) => {
         res.status(200).json({ status: 'success', results: shows.length, data: { shows } });
     } catch (error) {
         res.status(500).json({ status: 'error', message: 'Server error: Cannot retrieve shows.' });
+    }
+};
+
+exports.getTopRatedShows = async (req, res) => {
+    try {
+        const showRatings = await ReviewShow.aggregate([
+            {
+                $group: {
+                    _id: "$show",
+                    avgRating: { $avg: "$rating" }, // Calculate the average rating
+                    reviewCount: { $sum: 1 } // Count the number of reviews
+                }
+            },
+            {
+                $sort: { avgRating: -1, reviewCount: -1 } // Sort by highest rating, then by review count
+            }
+        ]);
+
+        const showIds = showRatings.map(r => r._id);
+        const shows = await Show.find({ _id: { $in: showIds }, is_deleted: false });
+
+        // Map the shows with their respective rating and review count
+        const topRatedShows = showRatings.map(rating => {
+            const showDetails = shows.find(show => show._id.toString() === rating._id.toString());
+            if (!showDetails) return null;
+
+            return {
+                _id: showDetails._id,
+                title: showDetails.title,
+                poster_url: showDetails.poster_url,
+                language: showDetails.language,
+                avgRating: rating.avgRating,
+                reviewCount: rating.reviewCount
+            };
+        }).filter(show => show !== null); // Remove null values
+
+        res.status(200).json({status: 'success',results: topRatedShows.length,data: { topRatedShows }});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ status: 'error', message: 'Server error: Cannot retrieve top-rated shows.' });
     }
 };
 

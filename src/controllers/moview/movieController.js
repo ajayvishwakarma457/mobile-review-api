@@ -1,4 +1,5 @@
 const Movie = require('../../models/moview/movieModel');
+const Review = require('../../models/moview/reviewModel');
 
 exports.getAllMovies = async(req, res) => {
     try {
@@ -7,6 +8,35 @@ exports.getAllMovies = async(req, res) => {
         res.status(200).json({ status: 'success', results: movies.length, data: { movies } });
     } catch (error) {
         res.status(500).json({ status: 'error', message: 'Server error: Cannot retrieve movies.' });
+    }
+};
+
+exports.getTopRatedMovies = async (req, res) => {
+    try {
+        // Fetch all movies that are not deleted
+        const movies = await Movie.find({ is_deleted: false });
+
+        // Aggregate reviews to get average rating and review count for each movie
+        const movieRatings = await Review.aggregate([
+            {$group: {_id: "$movie",avgRating: { $avg: "$rating" },reviewCount: { $sum: 1 }}},
+            {
+                $sort: { avgRating: -1, reviewCount: -1 } // Sort by highest rating, then by review count
+            }
+        ]);
+
+        // Map movie details with ratings and review counts
+        const sortedMovies = movieRatings.map(movie => {
+                const movieDetails = movies.find(m => m._id.toString() === movie._id.toString());
+                if (!movieDetails) return null; // Ignore movies not found in the Movie collection
+                return { _id: movieDetails._id, title: movieDetails.title, poster_url: movieDetails.poster_url, avgRating: movie.avgRating, reviewCount: movie.reviewCount,  language: movieDetails.language};
+            })
+            .filter(movie => movie !== null); // Remove any null entries
+
+        res.status(200).json({status: "success",results: sortedMovies.length, data: { movies: sortedMovies }});
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ status: "error", message: "Server error: Cannot retrieve movies." });
     }
 };
 
