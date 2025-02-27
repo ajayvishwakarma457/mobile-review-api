@@ -1,6 +1,8 @@
 const Notification = require('../../models/moview/notificationModel');
 const User = require('../../models/moview/userModel');
 const Follower = require('../../models/moview/followerModel');
+const Show = require('../../models/moview/showModel');
+const Movie = require('../../models/moview/movieModel');
 
 exports.getAllNotifications = async(req, res) => {
     try {
@@ -24,18 +26,34 @@ exports.getNotificationById = async(req, res) => {
 };
 
 exports.getNotificationByFollowerId = async(req, res) => {
-    try {
-        // const notifications = await Notification.find({ user_id: req.params.user_id, seen: false, is_deleted: false });
-        const notifications = await Notification.
+    try {        
+        let notifications = await Notification.
         find({ user_id: req.params.user_id, seen: false, is_deleted: false })
             .populate('user_id', 'photo username')
-            .populate('sender_user_id', 'photo username');
+            .populate('sender_user_id', 'photo username');            
         if (!notifications) {
             return res.status(404).json({ status: 'fail', message: 'No notification found with that ID' });
         }
+
+        
+         // Add title field based on type
+         notifications = await Promise.all(notifications.map(async (notification) => {
+            let title = '';
+            if (notification.type === 'movie') {
+                const movie = await Movie.findById(notification.movie_show_id).select('title');
+                title = movie ? movie.title : 'Unknown Movie';
+            } else if (notification.type === 'show') {
+                const show = await Show.findById(notification.movie_show_id).select('title');
+                title = show ? show.title : 'Unknown Show';
+            }
+            return { ...notification.toObject(), title };
+        }));
+
+        
+
         res.status(200).json({ status: 'success', length: notifications.length, data: { notifications } });
     } catch (error) {
-        res.status(500).json({ status: 'error', message: 'Server error: Cannot retrieve the notification.' });
+        res.status(500).json({ status: 'error', message: `Server error: Cannot retrieve the notification. ${error}` });
     }
 };
 
