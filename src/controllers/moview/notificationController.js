@@ -28,8 +28,8 @@ exports.getNotificationByFollowerId = async(req, res) => {
         // const notifications = await Notification.find({ user_id: req.params.user_id, seen: false, is_deleted: false });
         const notifications = await Notification.
         find({ user_id: req.params.user_id, seen: false, is_deleted: false })
-            .populate('user_id', 'photo')
-            .populate('sender_user_id', 'photo');
+            .populate('user_id', 'photo username')
+            .populate('sender_user_id', 'photo username');
         if (!notifications) {
             return res.status(404).json({ status: 'fail', message: 'No notification found with that ID' });
         }

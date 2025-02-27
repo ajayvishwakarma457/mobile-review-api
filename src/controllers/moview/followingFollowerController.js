@@ -146,8 +146,6 @@ exports.checkIfFollowing = async (req, res) => {
 
     const { userId, followerId } = req.body;
 
-
-
     if (!userId || !followerId) {
         return res.status(400).json({ error: 'User ID and Follower ID are required' });
     }
