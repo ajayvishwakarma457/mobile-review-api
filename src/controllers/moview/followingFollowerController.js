@@ -205,6 +205,44 @@ exports.findFollowingByUserId = async (req, res) => {
     }
 };
 
+exports.findFollowingOtherUserByUserId = async (req, res) => {
+    const { userId, currentUserId } = req.params;
+
+    if (!userId || !currentUserId) {
+        return res.status(400).json({ error: 'User ID and Current User ID are required' });
+    }
+
+    try {
+        // Fetch all users the given user is following
+        const followingRecords = await Following.find({ userId }).populate('followingId');
+
+        // Fetch all users that the current user is following
+        const currentUserFollowingRecords = await Following.find({ userId: currentUserId }).populate('followingId');
+
+        // Extract the IDs of users that the current user follows
+        const currentUserFollowingIds = currentUserFollowingRecords.map(item => item.followingId._id.toString());
+
+        // Prepare response data with isFollowing flag for current user
+        const resultData = followingRecords.map((item) => {
+            const isFollowing = currentUserFollowingIds.includes(item.followingId._id.toString());
+            return {
+                ...item._doc,
+                isFollowing: isFollowing
+            };
+        });
+
+        if (!resultData.length) {
+            return res.status(404).json({ error: 'No records found for the specified following ID' });
+        }
+
+        return res.status(200).json({ status: 'success', data: resultData });
+    } catch (error) {
+        console.error('Error finding following records:', error);
+        return res.status(500).json({ status: 'error', message: error.message });
+    }
+};
+
+
 exports.findFollowerByUserId = async (req, res) => {
 
     const { userId } = req.params;
