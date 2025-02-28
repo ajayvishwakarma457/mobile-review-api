@@ -227,6 +227,9 @@ exports.findFollowerByUserId = async (req, res) => {
             }
         });
 
+        console.clear();
+        console.log('resultData', resultData);
+
         if (!resultData.length) {
             return res.status(200).json({ status: 'success', data: [], error: 'No records found for the specified Follower ID' });
         }
@@ -237,3 +240,42 @@ exports.findFollowerByUserId = async (req, res) => {
         return res.status(500).json({ status: 'error', message: error.message });
     }
 };
+
+
+exports.findFollowerOtherUserByUserId = async (req, res) => {
+    const { userId, currentUserId } = req.params;
+
+    if (!userId || !currentUserId) {
+        return res.status(400).json({ error: 'User Id and Current User Id are required' });
+    }
+
+    try {
+        // Fetch all followers of userId
+        const followerRecords = await Follower.find({ userId: userId }).populate('followerId');
+
+        // Fetch all users that currentUserId is following
+        const currentUserFollowingRecords = await Following.find({ userId: currentUserId }).populate('followingId');
+
+        // Extract the IDs of users that currentUserId is following
+        const currentUserFollowingIds = currentUserFollowingRecords.map(item => item.followingId._id.toString());
+
+        // Map follower records and determine if currentUserId follows each one
+        const resultData = followerRecords.map((item) => {
+            const isFollowing = currentUserFollowingIds.includes(item.followerId._id.toString());
+            return {
+                ...item._doc,
+                isFollowing
+            };
+        });
+
+        if (!resultData.length) {
+            return res.status(200).json({ status: 'success', data: [], error: 'No records found for the specified Follower ID' });
+        }
+
+        return res.status(200).json({ status: 'success', data: resultData });
+    } catch (error) {
+        console.error('Error finding following records:', error);
+        return res.status(500).json({ status: 'error', message: error.message });
+    }
+};
+

@@ -12,4 +12,6 @@ router.get('/following/:userId', followingFollowerController.findFollowingByUser
 
 router.get('/follower/:userId', followingFollowerController.findFollowerByUserId);
 
+router.get('/other-user-follower/:userId/:currentUserId', followingFollowerController.findFollowerOtherUserByUserId);
+
 module.exports = router;
