@@ -252,7 +252,7 @@ exports.findFollowerOtherUserByUserId = async (req, res) => {
     try {
         // Fetch all followers of userId
         const followerRecords = await Follower.find({ userId: userId }).populate('followerId');
-
+        
         // Fetch all users that currentUserId is following
         const currentUserFollowingRecords = await Following.find({ userId: currentUserId }).populate('followingId');
 
