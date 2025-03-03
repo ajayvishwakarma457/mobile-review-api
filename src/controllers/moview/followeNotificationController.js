@@ -19,7 +19,7 @@ exports.getNotificationById = async (req, res) => {
     try {
         const notification = await FollowNotification.findById(req.params.id).populate('user', 'firstname email').populate('sender', 'firstname email'); 
         if (!notification) {
-            return res.status(404).json({status: 'fail',message: 'No notification found with that ID'});
+            return res.status(200).json({status: 'fail',message: 'No notification found with that ID'});
         }
         res.status(200).json({status: 'success',data: { notification }});
     } catch (error) {
