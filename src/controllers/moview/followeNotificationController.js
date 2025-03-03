@@ -28,7 +28,7 @@ exports.getNotificationById = async (req, res) => {
 };
 
 exports.getAllNotificationsByReceiverId = async(req, res) => {
-    try {
+    try {        
         const notification = await FollowNotification.find({user:req.params.id}).populate('sender'); 
         if (!notification) {
             return res.status(404).json({status: 'fail',message: 'No notification found with that ID'});
@@ -93,13 +93,10 @@ exports.updateNotificationById = async(req, res) => {
 exports.deleteNotificationById = async(req, res) => {
     try {
         const notification = await FollowNotification.findByIdAndDelete(req.params.id);
-
         if (!notification) {
             return res.status(404).json({ status: 'fail', message: 'No notification found with that ID' });
         }
-
         res.status(200).json({status: 'success',message: 'Notification deleted successfully', data: { _id: notification._id }});
-
     } catch (error) {
         console.error('Error deleting notification:', error);
         res.status(500).json({ status: 'error', message: 'Server error: Cannot delete the notification.', error: error.message });
