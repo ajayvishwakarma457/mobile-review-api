@@ -11,7 +11,7 @@ exports.getAllNotifications = async(req, res) => {
         const notifications = await FollowNotification.find({}).populate('user', 'firstname email').populate('sender', 'firstname email'); 
         res.status(200).json({status: 'success',results: notifications.length,data: { notifications }});
     } catch (error) {
-        res.status(500).json({status: 'error',message: 'Server error: Cannot retrieve notifications.', error: error.message});
+        res.status(500).json({status: 'error',message: 'Server error: Cannot retrieve notifications.', error: error});
     }
 };
 
