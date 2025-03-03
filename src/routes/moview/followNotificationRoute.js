@@ -7,7 +7,7 @@ router.get('/notification', followeNotificationController.getAllNotifications);
 
 router.get('/notification/:id', followeNotificationController.getNotificationById);
 
-// router.get('/notification/follower/:user_id', followeNotificationController.getNotificationByFollowerId);
+router.get('/notification/receiver/:id', followeNotificationController.getAllNotificationsByReceiverId);
 
 router.post('/notification', followeNotificationController.createNotification);
 

@@ -27,33 +27,18 @@ exports.getNotificationById = async (req, res) => {
     }
 };
 
-// exports.getNotificationByFollowerId = async(req, res) => {
-//     try {        
-//         let notifications = await FollowNotification.
-//         find({ user_id: req.params.user_id, seen: false, is_deleted: false }).populate('user_id', 'photo username').populate('sender_user_id', 'photo username');            
+exports.getAllNotificationsByReceiverId = async(req, res) => {
+    try {
+        const notification = await FollowNotification.find({user:req.params.id}).populate('sender'); 
+        if (!notification) {
+            return res.status(404).json({status: 'fail',message: 'No notification found with that ID'});
+        }
+        res.status(200).json({status: 'success',data: { notification }});
+    } catch (error) {
+        res.status(500).json({status: 'error',message: 'Server error: Cannot retrieve the notification.',error: error});
+    }
+};
 
-//         if (!notifications) {
-//             return res.status(404).json({ status: 'fail', message: 'No notification found with that ID' });
-//         }
-
-//          // Add title field based on type
-//          notifications = await Promise.all(notifications.map(async (notification) => {
-//             let title = '';
-//             if (notification.type === 'movie') {
-//                 const movie = await Movie.findById(notification.movie_show_id).select('title');
-//                 title = movie ? movie.title : 'Unknown Movie';
-//             } else if (notification.type === 'show') {
-//                 const show = await Show.findById(notification.movie_show_id).select('title');
-//                 title = show ? show.title : 'Unknown Show';
-//             }
-//             return { ...notification.toObject(), title };
-//         }));
-
-//         res.status(200).json({ status: 'success', length: notifications.length, data: { notifications } });
-//     } catch (error) {
-//         res.status(500).json({ status: 'error', message: `Server error: Cannot retrieve the notification. ${error}` });
-//     }
-// };
 
 
 exports.createNotification = async(req, res) => {
