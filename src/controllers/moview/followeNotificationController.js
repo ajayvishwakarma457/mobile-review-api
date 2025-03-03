@@ -70,7 +70,8 @@ exports.createNotification = async(req, res) => {
         const newNotification = new FollowNotification({
             user: user_id, // The user receiving the notification
             sender: sender_user_id, // The user who triggered the notification
-            is_read: false
+            is_read: false, 
+            created_at: new Date()
         });
 
         // Save to the database
