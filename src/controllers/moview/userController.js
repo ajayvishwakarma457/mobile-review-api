@@ -87,28 +87,40 @@ exports.getOtherUserDetails = async (req, res) => {
         const followingCount = await Following.countDocuments({ userId: userId });
 
         // Find reviews by this user with movies populated
-        const reviews = await Review.find({ user: userId }).populate('movie', 'title poster_url');
-        const reviewShows = await ReviewShow.find({ user: userId }).populate('show', 'title poster_url');
+        const reviews = await Review.find({ user: userId }).populate('movie');
+        const reviewShows = await ReviewShow.find({ user: userId }).populate('show');
 
         // Get correct counts
         const totalReviewedMovies = reviews.length;
         const totalReviewedShows = reviewShows.length;
 
-        // Fetch the list of movies reviewed with ratings
-        const movies = reviews.map(review => ({
-            _id: review.movie ? review.movie._id : null,
-            title: review.movie ? review.movie.title : 'Unknown',
-            poster_url: review.movie ? review.movie.poster_url : '',
-            rating: review.rating
-        })).filter(movie => movie._id); // Remove null values
+        // // Fetch the list of movies reviewed with ratings
+        // const movies = reviews.map(review => ({
+        //     _id: review.movie ? review.movie._id : null,
+        //     title: review.movie ? review.movie.title : 'Unknown',
+        //     poster_url: review.movie ? review.movie.poster_url : '',
+        //     rating: review.rating
+        // })).filter(movie => movie._id); // Remove null values
+
+        // // Fetch the list of shows reviewed with ratings
+        // const shows = reviewShows.map(review => ({
+        //     _id: review.show ? review.show._id : null,
+        //     title: review.show ? review.show.title : 'Unknown',
+        //     poster_url: review.show ? review.show.poster_url : '',
+        //     rating: review.rating
+        // })).filter(show => show._id); // Remove null values
+
+
+        const movies = reviews
+                        .map(review => review.movie ? { ...review.movie.toObject(), rating: review.rating } : null)
+                        .filter(movie => movie); // Remove null values
+
 
         // Fetch the list of shows reviewed with ratings
-        const shows = reviewShows.map(review => ({
-            _id: review.show ? review.show._id : null,
-            title: review.show ? review.show.title : 'Unknown',
-            poster_url: review.show ? review.show.poster_url : '',
-            rating: review.rating
-        })).filter(show => show._id); // Remove null values
+        const shows = reviewShows
+                        .map(review => review.show ? { ...review.show.toObject(), rating: review.rating } : null)
+                        .filter(show => show); // Remove null values
+
 
         // Send the response
         res.status(200).json({
