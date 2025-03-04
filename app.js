@@ -36,6 +36,7 @@ const topSearchedMoviesRoute = require('./src/routes/moview/topSearchedMoviesRou
 const topSearchedShowsRoute = require('./src/routes/moview/topSearchedShowsRoute');
 
 const followNotificationRoute = require('./src/routes/moview/followNotificationRoute');
+const bannerRoute = require('./src/routes/moview/bannerRoute');
 
 const testRoute = require('./src/routes/moview/testRoute');
 app.use('/api', testRoute);
@@ -62,6 +63,8 @@ app.use('/api', authMiddleware.verifyToken, topSearchedMoviesRoute);
 app.use('/api', authMiddleware.verifyToken, topSearchedShowsRoute);
 
 app.use('/api/follow/', authMiddleware.verifyToken, followNotificationRoute);
+
+app.use('/api', authMiddleware.verifyToken, bannerRoute);
 
 const PORT = process.env.PORT || 3333;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
