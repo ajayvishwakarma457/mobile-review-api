@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const bannerSchema = new Schema({
+    title: {
+        type: String,
+        required: true
+    },
     trending_banner: {
         type: String,
         required: true
