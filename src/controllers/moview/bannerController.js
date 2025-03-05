@@ -50,11 +50,11 @@ exports.updateBannerById = async (req, res) => {
 
 exports.deleteBannerById = async (req, res) => {
     try {
-        const banner = await Banner.findByIdAndUpdate(req.params.id, { is_deleted: true }, { new: true });
+        const banner = await Banner.findByIdAndDelete(req.params.id);
         if (!banner) {
             return res.status(404).json({ status: 'fail', message: 'No banner found with that ID' });
         }
-        res.status(200).json({ status: 'success', message: 'Banner deleted successfully' });
+        res.status(200).json({ status: 'success', message: 'Banner deleted permanently' });
     } catch (error) {
         console.error('Error deleting banner:', error);
         res.status(500).json({ status: 'error', message: 'Server error: Cannot delete the banner.' });
