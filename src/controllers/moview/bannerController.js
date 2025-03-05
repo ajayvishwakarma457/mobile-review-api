@@ -12,6 +12,19 @@ exports.getAllBanners = async (req, res) => {
     }
 };
 
+exports.getAllBannerWithMedia = async (req, res) => {
+    try {
+        const banners = await Banner.find({ is_deleted: false })
+                                    .populate("movie") // Populate movie details
+                                    .populate("show") // Populate show details
+                                    .sort({ _id: -1 });
+        res.status(200).json({ status: 'success', results: banners.length, data: { banners } });
+    } catch (error) {
+        console.error('Error fetching banners:', error);
+        res.status(500).json({ status: 'error', message: 'Server error: Cannot retrieve banners.' });
+    }
+};
+
 exports.getBannerById = async (req, res) => {
     try {
         const banner = await Banner.findById(req.params.id);
