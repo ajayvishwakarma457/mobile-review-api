@@ -12,5 +12,7 @@ router.put('/test/:id', testController.updateTestById);
 
 router.delete('/test/:id', testController.deleteTestById);
 
+router.get('/test-tmdb', testController.getTestTmdb);
+
 module.exports = router;
 

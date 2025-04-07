@@ -59,3 +59,28 @@ exports.deleteTestById = async (req, res) => {
 };
 
 
+
+exports.getTestTmdb = async (req, res) => {
+    try {
+        const token = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4ODE2MmRmNDgxZWQ1MWEzNjEzYTVjMmM0NTE4Y2VlMCIsIm5iZiI6MTcxOTU4MTYyNi42NjQsInN1YiI6IjY2N2ViYmJhYTU2OWE3ODVkMjY3ZTBhZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.oHVAf2Zk1fv0TIcU-mEgzzj6sUOzj8flnbNcmaEadgI';
+        const API_KEY = '88162df481ed51a3613a5c2c4518cee0';
+        // const url = `https://api.themoviedb.org/3/movie/popular?language=en-US&page=1`;
+        const url = 'https://api.themoviedb.org/3/search/movie?include_adult=false&language=en-US&page=1';
+
+        const options = {
+            method: 'GET',
+            headers: {
+                accept: 'application/json',
+                Authorization: `Bearer ${token}`
+            }
+        };
+
+        const response = await fetch(url, options);        
+        console.log(response);
+        const data = await response.json();
+        res.status(200).json({ status: 'success', data: data.results });
+    } catch (error) {
+        res.status(500).json({ status: 'error', error: error.message });
+    }
+};
+
