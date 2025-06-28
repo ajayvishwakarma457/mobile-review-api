@@ -74,3 +74,7 @@ npm run start
 Author: Ajay M Vishwakarma
 GitHub: @ajayvishwakarma457  
 Email: ajayvishwakarma457@gmail.com
+
+📄 License
+  This repository is licensed under the MIT License.
+  See the LICENSE file for details.
